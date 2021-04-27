@@ -131,3 +131,6 @@ temp/
 
 output/*
 !output/.gitkeep
+
+files/*
+!files/.gitkeep
