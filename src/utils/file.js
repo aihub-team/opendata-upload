@@ -15,9 +15,12 @@ const load = async (path) => {
   const files = fs.readdirSync(path);
   let openData = [];
   for await (const file of files) {
+    if (file === '.gitkeep') {
+      continue;
+    }
     const filename = `${path}/${file}`;
-    const fileContent = await getFileContents(filename);
-    openData.push(fileContent);
+    const fileContents = await getFileContents(filename);
+    fileContents.forEach((fileContent) => openData.push(fileContent));
   }
   return openData;
 
