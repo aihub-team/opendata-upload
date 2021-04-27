@@ -1,0 +1,21 @@
+{
+  "scripts": {
+    "start": "babel-node src/index.js"
+  },
+  "dependencies": {
+    "cheerio": "^1.0.0-rc.5",
+    "dotenv": "^8.2.0",
+    "puppeteer": "^8.0.0"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.13.10",
+    "@babel/core": "^7.13.10",
+    "@babel/node": "^7.13.12",
+    "@babel/polyfill": "^7.12.1",
+    "@babel/preset-env": "^7.13.12",
+    "babel-loader": "^8.2.2",
+    "eslint": "^7.22.0"
+  },
+  "main": "src/index.js",
+  "type": "module"
+}
