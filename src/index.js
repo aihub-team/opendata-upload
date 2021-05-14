@@ -19,21 +19,29 @@ const SLEEP_TIME = 1000;
     await sleep(SLEEP_TIME);
 
     const { tag, title, data, link } = openDataContent;
-    await page.type('#edit-title-0-value', title, { delay: 20 });
-    await page.type('#edit-field-link-0-title', link, { delay: 20 });
-    // await page.type('#cke_1_contents > iframe', data, { delay: 20 });
-    const OPENDATA_OPTION_VALUE = '8';
-    await page.select('#edit-field-data-category-shs-0-0', OPENDATA_OPTION_VALUE);
-    await sleep(SLEEP_TIME);
-    await page.select('#edit-field-data-category-shs-0-1', getOpenDataOptionValue(tag));
+    try {
+      await page.type('#edit-title-0-value', title, { delay: 20 });
+      await page.type('#edit-field-link-0-title', '바로가기', { delay: 20 });
+      await page.type('#edit-field-link-0-uri', link, { delay: 20 });
+      await page.type('#cke_1_contents > iframe', data, { delay: 20 });
+      const OPENDATA_OPTION_VALUE = '8';
+      await page.select('#edit-field-data-category-shs-0-0', OPENDATA_OPTION_VALUE);
+      await sleep(SLEEP_TIME);
+      await page.select('#edit-field-data-category-shs-0-1', getOpenDataOptionValue(tag));
 
-    debugger;
+      await page.click('#cke_31_label'); // 소스 버튼
+      await page.type('#cke_1_contents > textarea', `<p>${data}</p>`);
+      await page.click('#edit-submit');
+    } catch (err) {
+      console.error(err);
+      closeAll();
+    }
   }
 
   closeAll(page, browser);
 })();
 
-function getOpenDataOptionValue(tag) {
+const getOpenDataOptionValue = (tag) => {
   if (tag === '텍스트') {
     return '52';
   }
@@ -51,15 +59,15 @@ function getOpenDataOptionValue(tag) {
   }
 
   return '204';
-}
+};
 
-function closeAll(page, browser) {
+const closeAll = (page, browser) => {
   page.close();
   browser.close();
-}
+};
 
-async function login(page) {
+const login = async (page) => {
   await page.goto(LOGIN_URL);
   await loginAction(page);
   await sleep(SLEEP_TIME);
-}
+};
