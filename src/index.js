@@ -3,6 +3,7 @@ import { sleep } from './utils/index.js';
 import { launchBrowser, getPage, loginAction } from './utils/setup.js';
 import { LOGIN_URL, OPEN_DATA_URL } from './config/urls.js';
 import * as file from './utils/file.js';
+import * as selectors from './selectors/main.js';
 
 const SLEEP_TIME = 1000;
 (async () => {
@@ -20,28 +21,32 @@ const SLEEP_TIME = 1000;
 
     const { tag, title, data, link } = openDataContent;
     try {
-      await page.type('#edit-title-0-value', title, { delay: 20 });
-      await page.type('#edit-field-link-0-title', '바로가기', { delay: 20 });
-      await page.type('#edit-field-link-0-uri', link, { delay: 20 });
-      await page.type('#cke_1_contents > iframe', data, { delay: 20 });
-      const OPENDATA_OPTION_VALUE = '8';
-      await page.select('#edit-field-data-category-shs-0-0', OPENDATA_OPTION_VALUE);
-      await sleep(SLEEP_TIME);
-      await page.select('#edit-field-data-category-shs-0-1', getOpenDataOptionValue(tag));
+      const DELAY_TIME = 20;
+      await page.type(selectors.title, title, { delay: DELAY_TIME });
+      const LINK_BUTTON_TEXT = '바로가기';
+      await page.type(selectors.link, LINK_BUTTON_TEXT, { delay: DELAY_TIME });
+      await page.type(selectors.uri, link, { delay: DELAY_TIME });
+      await page.type(selectors.data, data, { delay: DELAY_TIME });
 
-      await page.click('#cke_31_label'); // 소스 버튼
-      await page.type('#cke_1_contents > textarea', `<p>${data}</p>`);
-      await page.click('#edit-submit');
+      const OPENDATA_CATEGORY_VALUE = '8';
+      await page.select(selectors.openDataCategoryDropdown, OPENDATA_CATEGORY_VALUE);
+      await sleep(SLEEP_TIME);
+      await page.select(selectors.openDataType, getTypeNumberFromTag(tag));
+
+      await page.click(selectors.sourceButton);
+      await page.type(selectors.dataTextArea, `<p>${data}</p>`);
+      debugger;
+      await page.click(selectors.saveButton);
     } catch (err) {
       console.error(err);
-      closeAll();
+      close(page, browser);
     }
   }
 
-  closeAll(page, browser);
+  close(page, browser);
 })();
 
-const getOpenDataOptionValue = (tag) => {
+const getTypeNumberFromTag = (tag) => {
   if (tag === '텍스트') {
     return '52';
   }
@@ -61,7 +66,7 @@ const getOpenDataOptionValue = (tag) => {
   return '204';
 };
 
-const closeAll = (page, browser) => {
+const close = (page, browser) => {
   page.close();
   browser.close();
 };
